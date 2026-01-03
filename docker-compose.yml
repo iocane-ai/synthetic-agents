@@ -1,0 +1,48 @@
+services:
+  tool-service:
+    container_name: tool-service
+    build: ./tool_service
+    ports: ["8081:8081"]
+    environment:
+      TOOL_DELAY_MS: "80"
+      TOOL_ERROR_RATE: "0.0"
+
+  agent-app:
+    container_name: agent-app
+    build: ./agent_app
+    ports: ["8080:8080"]
+    environment:
+      SERVICE_NAME: "synthetic-agent-app"
+      TOOL_BASE: "http://tool-service:8081"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+    depends_on:
+      - tool-service
+      # - otel-collector
+
+  agent-app-secondary:
+    container_name: agent-app-secondary
+    build: ./agent_app
+    ports: ["8082:8080"]
+    environment:
+      SERVICE_NAME: "synthetic-agent-secondary"
+      AGENT_NAME: "SecondaryAgent"
+      TOOL_BASE: "http://tool-service:8081"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+    depends_on:
+      - tool-service
+      # - otel-collector
+
+  # otel-collector:
+  #   image: otel/opentelemetry-collector-contrib:latest
+  #   container_name: otel-collector
+  #   volumes:
+  #     - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+  #   ports:
+  #     - "4317:4317"
+  #     - "4318:4318"
+  #     - "8888:8888"
+
+networks:
+  default:
+    name: synthetic-agents-net
+    driver: bridge

@@ -1,0 +1,21 @@
+#!/bin/bash
+echo "Tool service health check..."
+curl -s http://localhost:8081/health
+echo "Agent app health check..."
+curl -s "http://localhost:8080/run?scenario=fanout&fanout=50&concurrency=10&delay_ms=50"
+echo "Agent app chain scenario..."
+curl -s "http://localhost:8080/run?scenario=chain&depth=40&delay_ms=30"
+echo "Agent app retry scenario..."
+curl -s "http://localhost:8080/run?scenario=retry&fanout=80&concurrency=20&delay_ms=60&error_rate=0.2&max_retries=4"
+echo "Agent app stream scenario..."
+curl -N "http://localhost:8080/stream?duration_s=5&tool_delay_ms=300&background_fanout=80"
+echo "Agent app DAG scenario..."
+curl -s "http://localhost:8080/run?scenario=dag&fanout=20&delay_ms=40"
+echo "Agent app ReAct scenario..."
+curl -s "http://localhost:8080/run?scenario=react&max_steps=5&delay_ms=50"
+echo "Agent app Human scenario..."
+curl -s "http://localhost:8080/run?scenario=human&human_delay_s=2.0"
+echo "Agent app RAG scenario..."
+curl -s "http://localhost:8080/run?scenario=rag&rag_chunks=10&rag_chunk_size_kb=2&delay_ms=30"
+echo "All checks passed!"
+exit 0
