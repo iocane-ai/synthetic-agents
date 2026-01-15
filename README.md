@@ -149,3 +149,5 @@ The project includes an OpenTelemetry Collector configuration.
 3.  **Ports**:
     *   `4318`: OTLP HTTP receiver.
     *   `4317`: OTLP gRPC receiver.
+
+[Connect to iocane-ati to view the above stress behaviours of the agents](docs/IOCANE_ATI.md)
